@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סימולציית קניות</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #8a2be2, #ffd700, #ff0000);
+            color: white;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .header-logo {
+            width: 150px;
+            height: auto;
+            margin: 10px 0;
+        }
+        
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+        }
+        
+        .logo {
+            width: 200px;
+            height: auto;
+            margin-bottom: 30px;
+        }
+        
+        .start-button {
+            background-color: #8a2be2;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .start-button:hover {
+            background-color: #7020a0;
+        }
+        
+        .store {
+            display: none;
+        }
+        
+        .categories {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            margin-left: 320px;
+        }
+        
+        .category-button {
+            background-color: #8a2be2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .category-button:hover, .category-button.active {
+            background-color: #ffd700;
+            color: black;
+        }
+        
+        .products-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+            margin-left: 320px;
+        }
+        
+        .product {
+            width: 180px;
+            margin: 10px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .product img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+        
+        .product h3 {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        
+        .product p {
+            font-weight: bold;
+            color: #8a2be2;
+            margin: 5px 0;
+        }
+        
+        .product button {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .product button:hover {
+            background-color: #cc0000;
+        }
+        
+        .cart {
+            width: 300px;
+            position: fixed;
+            left: 20px;
+            top: 100px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding: 15px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .cart h2 {
+            color: #8a2be2;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item-info {
+            flex-grow: 1;
+            text-align: right;
+        }
+        
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+        }
+        
+        .cart-item-quantity button {
+            background-color: #eee;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .cart-item-quantity span {
+            margin: 0 10px;
+        }
+        
+        .cart-total {
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 15px;
+            text-align: left;
+        }
+        
+        .checkout-button {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+        
+        .checkout-button:hover {
+            background-color: #cc0000;
+        }
+        
+        .reset-button {
+            background-color: #ffd700;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .reset-button:hover {
+            background-color: #e6c200;
+        }
+        
+        .receipt {
+            display: none;
+            background-color: white;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .receipt h2 {
+            text-align: center;
+            color: #8a2be2;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+        }
+        
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .receipt-total {
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 15px;
+            text-align: left;
+            border-top: 2px solid #ffd700;
+            padding-top: 10px;
+        }
+        
+        .close-receipt-button {
+            background-color: #8a2be2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .close-receipt-button:hover {
+            background-color: #7020a0;
+        }
+        
+        .weight-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 5px;
+        }
+        
+        .weight-control input {
+            width: 60px;
+            text-align: center;
+            margin: 0 5px;
+            padding: 3px;
+        }
+        
+        @media (max-width: 768px) {
+            .cart {
+                position: static;
+                width: 100%;
+                max-width: 500px;
+                margin: 20px auto;
+            }
+            
+            .products-container {
+                margin-left: 0;
+            }
+            
+            .categories {
+                margin-left: 0;
+            }
+            
+            .product {
+                width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- מסך כניסה -->
+    <div class="welcome-screen" id="welcome-screen">
+        <img src="לוגו.png" alt="לוגו החנות" class="logo">
+        <h1>ברוכים הבאים לסימולציית הקניות</h1>
+        <button class="start-button" onclick="startShopping()">התחל בקניות</button>
+    </div>
+    
+    <!-- חנות -->
+    <div class="store" id="store">
+        <div class="header">
+            <img src="לוגו.png" alt="לוגו החנות" class="header-logo">
+        </div>
+        
+        <div class="container">
+            <div class="categories">
+                <button class="category-button active" onclick="showCategory('all')">הכל</button>
+                <button class="category-button" onclick="showCategory('dairy')">מוצרי חלב וביצים</button>
+                <button class="category-button" onclick="showCategory('vegetables')">ירקות</button>
+                <button class="category-button" onclick="showCategory('fruits')">פירות</button>
+                <button class="category-button" onclick="showCategory('bread')">מאפים</button>
+                <button class="category-button" onclick="showCategory('kitchenware')">כלי בית</button>
+            </div>
+            
+            <div class="products-container" id="products">
+                <!-- המוצרים יופיעו כאן באמצעות JavaScript -->
+            </div>
+            
+            <div class="cart" id="cart">
+                <h2>עגלת קניות</h2>
+                <div id="cart-items">
+                    <!-- פריטי העגלה יופיעו כאן -->
+                </div>
+                <div class="cart-total" id="cart-total">סה"כ: ₪0.00</div>
+                <button class="checkout-button" onclick="checkout()">לקופה</button>
+                <button class="reset-button" onclick="resetShopping()">חזרה להתחלה</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- חשבונית -->
+    <div class="receipt" id="receipt">
+        <h2>חשבונית</h2>
+        <div class="receipt-header">
+            <p>תאריך: <span id="receipt-date"></span></p>
+        </div>
+        <div id="receipt-items">
+            <!-- פריטי החשבונית יופיעו כאן -->
+        </div>
+        <div class="receipt-total" id="receipt-total">סה"כ: ₪0.00</div>
+        <button class="close-receipt-button" onclick="closeReceipt()">סגור חשבונית</button>
+        <button class="reset-button" onclick="resetShopping()">חזרה להתחלה</button>
+    </div>
+    
+    <script>
+        // נתוני המוצרים
+        const products = [
+            { id: 1, name: "חלב", price: 5.90, category: "dairy", image: "חלב.png" },
+            { id: 2, name: "גבינה צהובה", price: 10.90, category: "dairy", image: "גבינה צהובה.png" },
+            { id: 3, name: "יוגורט", price: 4.50, category: "dairy", image: "יוגורט.png" },
+            { id: 4, name: "חמאה", price: 8.90, category: "dairy", image: "חמאה.png" },
+            { id: 5, name: "ביצים", price: 12.90, category: "dairy", image: "ביצים.png" },
+            
+            { id: 6, name: "מלפפון", price: 3.90, category: "vegetables", image: "מלפפון.png", byWeight: true, unit: "ק״ג" },
+            { id: 7, name: "עגבניה", price: 4.90, category: "vegetables", image: "עגבניה.png", byWeight: true, unit: "ק״ג" },
+            { id: 8, name: "חסה", price: 5.50, category: "vegetables", image: "חסה.png", byWeight: true, unit: "ק״ג" },
+            { id: 9, name: "פלפל ירוק", price: 6.90, category: "vegetables", image: "פלפל ירוק.png", byWeight: true, unit: "ק״ג" },
+            { id: 10, name: "פלפל צהוב", price: 7.90, category: "vegetables", image: "פלפל צהוב.png", byWeight: true, unit: "ק״ג" },
+            { id: 11, name: "בצל", price: 2.90, category: "vegetables", image: "בצל.png", byWeight: true, unit: "ק״ג" },
+            { id: 12, name: "פטריות", price: 8.90, category: "vegetables", image: "פטריות.png", byWeight: true, unit: "ק״ג" },
+            
+            { id: 13, name: "תות", price: 9.90, category: "fruits", image: "תות.png", byWeight: true, unit: "ק״ג" },
+            { id: 14, name: "בננה", price: 5.90, category: "fruits", image: "בננה.png", byWeight: true, unit: "ק״ג" },
+            { id: 15, name: "תפוח עץ", price: 4.90, category: "fruits", image: "תפוח עץ.png", byWeight: true, unit: "ק״ג" },
+            { id: 16, name: "ענבים", price: 12.90, category: "fruits", image: "ענבים.png", byWeight: true, unit: "ק״ג" },
+            { id: 17, name: "תפוז", price: 5.90, category: "fruits", image: "תפוז.png", byWeight: true, unit: "ק״ג" },
+            
+            { id: 18, name: "לחם", price: 5.90, category: "bread", image: "לחם.png" },
+            { id: 19, name: "פיתה", price: 3.90, category: "bread", image: "פיתה.png" },
+            
+            { id: 20, name: "מחבת", price: 79.90, category: "kitchenware", image: "מחבת.png" },
+            { id: 21, name: "קולפן", price: 19.90, category: "kitchenware", image: "קולפן.png" },
+            { id: 22, name: "כפפות", price: 14.90, category: "kitchenware", image: "כפפות.png" },
+            { id: 23, name: "מטרפה", price: 24.90, category: "kitchenware", image: "מטרפה.png" },
+            { id: 24, name: "מערוך", price: 29.90, category: "kitchenware", image: "מערוך.png" },
+        ];
+        
+        // עגלת קניות
+        let cart = [];
+        
+        // פונקציות עזר
+        function formatPrice(price) {
+            return price.toFixed(2);
+        }
+        
+        // אתחול הדף
+        function initStore() {
+            renderProducts('all');
+            updateCart();
+        }
+        
+        // הצגת המוצרים
+        function renderProducts(category) {
+            const productsContainer = document.getElementById('products');
+            productsContainer.innerHTML = '';
+            
+            let productsToShow = products;
+            if (category !== 'all') {
+                productsToShow = products.filter(product => product.category === category);
+            }
+            
+            productsToShow.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.className = 'product';
+                
+                let productHTML = `
+                    <img src="${product.image}" alt="${product.name}" onerror="this.src='/api/placeholder/120/120'">
+                    <h3>${product.name}</h3>
+                `;
+                
+                if (product.byWeight) {
+                    productHTML += `
+                        <p>₪${formatPrice(product.price)} / ${product.unit}</p>
+                        <div class="weight-control">
+                            <input type="number" id="weight-${product.id}" value="1" min="0.1" step="0.1" max="10">
+                            <span>${product.unit}</span>
+                        </div>
+                        <button onclick="addToCartByWeight(${product.id})">הוסף לעגלה</button>
+                    `;
+                } else {
+                    productHTML += `
+                        <p>₪${formatPrice(product.price)}</p>
+                        <button onclick="addToCart(${product.id})">הוסף לעגלה</button>
+                    `;
+                }
+                
+                productElement.innerHTML = productHTML;
+                productsContainer.appendChild(productElement);
+            });
+            
+            // הוספת מחלקה active לכפתור הקטגוריה הנבחרת
+            const categoryButtons = document.querySelectorAll('.category-button');
+            categoryButtons.forEach(button => {
+                button.classList.remove('active');
+                if (button.textContent === 'הכל' && category === 'all') {
+                    button.classList.add('active');
+                } else if (
+                    (button.textContent === 'מוצרי חלב וביצים' && category === 'dairy') ||
+                    (button.textContent === 'ירקות' && category === 'vegetables') ||
+                    (button.textContent === 'פירות' && category === 'fruits') ||
+                    (button.textContent === 'מאפים' && category === 'bread') ||
+                    (button.textContent === 'כלי בית' && category === 'kitchenware')
+                ) {
+                    button.classList.add('active');
+                }
+            });
+        }
+        
+        // הצגת קטגוריה מסוימת
+        function showCategory(category) {
+            renderProducts(category);
+        }
+        
+        // הוספת מוצר לעגלה
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1,
+                    byWeight: false
+                });
+            }
+            
+            updateCart();
+        }
+        
+        // הוספת מוצר לעגלה לפי משקל
+        function addToCartByWeight(productId) {
+            const product = products.find(p => p.id === productId);
+            const weightInput = document.getElementById(`weight-${productId}`);
+            const weight = parseFloat(weightInput.value);
+            
+            if (isNaN(weight) || weight <= 0) {
+                alert('אנא הזן משקל חוקי');
+                return;
+            }
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity = weight;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: weight,
+                    byWeight: true,
+                    unit: product.unit
+                });
+            }
+            
+            updateCart();
+        }
+        
+        // עדכון העגלה
+        function updateCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartTotalElement = document.getElementById('cart-total');
+            
+            cartItemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p>העגלה ריקה</p>';
+                cartTotalElement.textContent = 'סה"כ: ₪0.00';
+                return;
+            }
+            
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = 'cart-item';
+                
+                let itemHTML = `
+                    <div class="cart-item-info">
+                        <div>${item.name}</div>
+                `;
+                
+                if (item.byWeight) {
+                    itemHTML += `<div>₪${formatPrice(item.price)} / ${item.unit} × ${item.quantity} ${item.unit} = ₪${formatPrice(itemTotal)}</div>`;
+                } else {
+                    itemHTML += `<div>₪${formatPrice(item.price)} × ${item.quantity} = ₪${formatPrice(itemTotal)}</div>`;
+                }
+                
+                itemHTML += `
+                    </div>
+                    <div class="cart-item-quantity">
+                        <button onclick="decreaseQuantity(${item.id})">-</button>
+                        <span>${item.quantity}${item.byWeight ? ' ' + item.unit : ''}</span>
+                        <button onclick="increaseQuantity(${item.id})">+</button>
+                    </div>
+                `;
+                
+                itemElement.innerHTML = itemHTML;
+                
+                cartItemsContainer.appendChild(itemElement);
+            });
+            
+            cartTotalElement.textContent = `סה"כ: ₪${formatPrice(total)}`;
+        }
+        
+        // הגדלת כמות מוצר בעגלה
+        function increaseQuantity(productId) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                if (item.byWeight) {
+                    item.quantity = Math.round((item.quantity + 0.1) * 10) / 10; // עיגול ל-1 ספרה אחרי הנקודה
+                } else {
+                    item.quantity += 1;
+                }
+                updateCart();
+            }
+        }
+        
+        // הקטנת כמות מוצר בעגלה
+        function decreaseQuantity(productId) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                if (item.byWeight) {
+                    item.quantity = Math.round((item.quantity - 0.1) * 10) / 10; // עיגול ל-1 ספרה אחרי הנקודה
+                } else {
+                    item.quantity -= 1;
+                }
+                
+                if (item.quantity <= 0) {
+                    cart = cart.filter(item => item.id !== productId);
+                }
+                
+                updateCart();
+            }
+        }
+        
+        // מעבר לקופה
+        function checkout() {
+            if (cart.length === 0) {
+                alert('העגלה ריקה');
+                return;
+            }
+            
+            const now = new Date();
+            const receiptDateElement = document.getElementById('receipt-date');
+            receiptDateElement.textContent = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} ${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            const receiptItemsContainer = document.getElementById('receipt-items');
+            const receiptTotalElement = document.getElementById('receipt-total');
+            
+            receiptItemsContainer.innerHTML = '';
+            
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = 'receipt-item';
+                
+                if (item.byWeight) {
+                    itemElement.innerHTML = `
+                        <div>${item.name} × ${item.quantity} ${item.unit}</div>
+                        <div>₪${formatPrice(itemTotal)}</div>
+                    `;
+                } else {
+                    itemElement.innerHTML = `
+                        <div>${item.name} × ${item.quantity}</div>
+                        <div>₪${formatPrice(itemTotal)}</div>
+                    `;
+                }
+                
+                receiptItemsContainer.appendChild(itemElement);
+            });
+            
+            receiptTotalElement.textContent = `סה"כ: ₪${formatPrice(total)}`;
+            
+            document.getElementById('store').style.display = 'none';
+            document.getElementById('receipt').style.display = 'block';
+        }
+        
+        // התחלת הקניות
+        function startShopping() {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('store').style.display = 'block';
+            initStore();
+        }
+        
+        // איפוס והתחלה מחדש
+        function resetShopping() {
+            cart = [];
+            document.getElementById('welcome-screen').style.display = 'flex';
+            document.getElementById('store').style.display = 'none';
+            document.getElementById('receipt').style.display = 'none';
+        }
+        
+        // סגירת החשבונית וחזרה לחנות
+        function closeReceipt() {
+            document.getElementById('store').style.display = 'block';
+            document.getElementById('receipt').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
